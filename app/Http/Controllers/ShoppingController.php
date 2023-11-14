@@ -30,7 +30,7 @@ class ShoppingController extends Controller
         foreach ($compras as $compra) {
             // Validar si la compra pertenece a un cliente registrado... si no mandar id
             if ($compra->cliente != '') {
-                $cliente = DB::table('clientes')->where('id', '=', $compra->cliente)->first();
+                $cliente = DB::table('clientes')->where('id', '=', $compra->cliente)->orWhere('cedula', '=', $compra->cliente)->first();
                 $compra->cliente = $cliente;
             } else {
                 $cliente1 = new stdClass();
@@ -111,8 +111,7 @@ class ShoppingController extends Controller
             'costo_medio_pago' => $datos->costo_medio_pago,
             'comentarios' => $datos->comentarios,
             'dinerorecibido'=>$datos->dinerorecibido,
-            'cambio'=>$datos->cambio,
-            'estado' => 'Recibida'
+            'cambio'=>$datos->cambio
         ]);
         $nums = count($datos->listaProductos);
         DB::table('lista_productos_comprados')->where('fk_compra', '=', $datos->id)->delete();
@@ -138,12 +137,12 @@ class ShoppingController extends Controller
     {
         $actualCant = DB::table('productos')->where('id', '=', $item->codigo)->first();
         if ($actualCant) {
-            if ($actualCant->cantidad != null) {
+            if(is_numeric($actualCant->cantidad)){
                 $newCant = intval($actualCant->cantidad) + intval($item->cantidad);
                 DB::table('productos')->where('id', '=', $item->codigo)->update([
                     'cantidad' => $newCant
                 ]);
-            }
+            }           
         }
     }
 
@@ -151,7 +150,7 @@ class ShoppingController extends Controller
     {
         $actualCant = DB::table('productos')->where('id', '=', $item->codigo)->first();
         if ($actualCant) {
-            if ($actualCant->cantidad != null && $actualCant->cantidad != 0) {
+            if(is_numeric($actualCant->cantidad)){
                 $newCant = $actualCant->cantidad - $item->cantidad;
                 DB::table('productos')->where('id', '=', $item->codigo)->update([
                     'cantidad' => $newCant
@@ -262,7 +261,7 @@ class ShoppingController extends Controller
         $listaProductos = DB::table('lista_productos_comprados')->where('fk_compra', '=', $id)->get();
         $datosCompra->listaProductos = $listaProductos;
         if ($datosCompra->cliente != '') {
-            $cliente = DB::table('clientes')->where('id', '=', $datosCompra->cliente)->first();
+            $cliente = DB::table('clientes')->where('id', '=', $datosCompra->cliente)->orWhere('cedula', '=', $datosCompra->cliente)->first();
             $datosCompra->cliente = $cliente;
         } else {
             $cliente1 = new stdClass();
@@ -286,7 +285,7 @@ class ShoppingController extends Controller
         $compras = DB::table('lista_compras')->get();
         foreach ($compras as $compra) {
             if ($compra->cliente != '') {
-                $cliente = DB::table('clientes')->where('cedula', '=', $compra->cliente)->first();
+                $cliente = DB::table('clientes')->where('id', '=', $compra->cliente)->orWhere('cedula', '=', $compra->cliente)->first();
                 $compra->cliente = $cliente;
             } else {
                 $cliente1 = new stdClass();

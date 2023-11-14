@@ -14,43 +14,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Cesar',
+            'name' => 'Usuario',
             'email' => 'ejemplo@gmail.com',
             'password' => Hash::make('123456')
         ]);
-        /*
-        DB::table('categorias')->insert([
-            'nombre'=> 'Helados',
-             'imagen'=> 'helado.jpg'
-        ]);
-        $id = DB::getPdo()->lastInsertId();
-
-        DB::table('productos')->insert([
-            'category_id'=> $id,
-            'nombre'=> 'Helado de fresa',
-            'descripcion'=> 'Delicioso helado de fresa con crema de maní',
-            'valor'=>'4000'
-        ]);
-        $id = DB::getPdo()->lastInsertId();
-        DB::table('imagenes_productos')->insert([
-            'nombre_imagen'=>'heladofresa.jpg',
-            'fk_producto'=>$id
-        ]);
-
-        DB::table('categorias_ingresos')->insert([
-            'nombre'=> 'Rendimientos financieros',
-        ]);
-        
-        DB::table('ingresos')->insert([
-            'fecha'=>now(),
-            'category_id'=>DB::getPdo()->lastInsertId(),
-            'valor'=>10000,
-            'comentario'=>'Intereses cdt'
-        ]);
-
-*/
-        
-        
-
+      
     }
 }

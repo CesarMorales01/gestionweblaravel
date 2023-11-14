@@ -45,12 +45,14 @@ const ShoppingCart = (params) => {
         //validar si se esta editando: validar si mostrar
         if (params.editando != '') {
             params.productos.forEach(element => {
-                let encontrarProducto = null
                 if (element.id == item.codigo) {
-                    encontrarProducto = element
                     // si cantidad en productos no es null no mostrar
-                    if (element.cantidad != null) {
-                        mostrar = 'none'
+                    try {
+                        let cant=parseInt(element.cantidad)
+                        if (cant == 0) { 
+                            mostrar = 'none'
+                        }
+                    } catch (error) {
                     }
                 }
             });
@@ -74,7 +76,7 @@ const ShoppingCart = (params) => {
             setSuperCantidad((valores) => ({
                 ...valores,
                 cantidad: 0
-            })) 
+            }))
         }, 4000);
     }
 
@@ -106,7 +108,8 @@ const ShoppingCart = (params) => {
                                     <td>{item.nombre}</td>
                                     <td>${glob.formatNumber(item.precio)}</td>
                                     <td>
-                                        <button onClick={() => setCodSuperCant(item.id)} data-toggle="modal" data-target="#cantModal" className='btn btn-outline-success'>{item.cantidad}</button>
+                                        <button style={{ display: validarInventario(item) }} onClick={() => setCodSuperCant(item.id)} data-toggle="modal" data-target="#cantModal" className='btn btn-outline-success'>{item.cantidad}</button>
+                                        <span style={{ display: validarInventario(item) == '' ? 'none' : '' }}>{item.cantidad}</span>
                                     </td>
                                     <td>${glob.formatNumber(item.precio * item.cantidad)}</td>
                                     <td>
@@ -116,6 +119,7 @@ const ShoppingCart = (params) => {
                                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                             </svg>
                                         </button>
+                                        <span style={{ color: 'red', display: validarInventario(item) == '' ? 'none' : '' }}>Sin</span>
                                     </td>
                                     <td>
                                         <button style={{ display: validarInventario(item) }} onClick={() => params.menosCant(item)} className="btn btn-light btn-sm">
@@ -124,6 +128,7 @@ const ShoppingCart = (params) => {
                                                 <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
                                             </svg>
                                         </button>
+                                        <span style={{ color: 'red', display: validarInventario(item) == '' ? 'none' : '' }}>inventario!</span>
                                     </td>
                                     <td>
                                         <button onClick={() => abrirDialogoElimininar(item.id)} className='btn btn-danger btn-sm'>

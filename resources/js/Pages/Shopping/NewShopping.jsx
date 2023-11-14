@@ -164,9 +164,16 @@ const NuevaCompra = (params) => {
         let nombre = ''
         let cedula = ''
         for (let i = 0; i < params.clientes.length; i++) {
-            if (e.target.value == params.clientes[i].cedula) {
-                nombre = params.clientes[i].nombre+" "+params.clientes[i].apellidos
-                cedula = params.clientes[i].id
+            if (e.target.value == params.clientes[i].id) {
+                nombre = params.clientes[i].nombre
+                if (params.clientes[i].cedula) {
+                    cedula = params.clientes[i].cedula
+                } else {
+                    cedula = params.clientes[i].id
+                }
+                if (params.clientes[i].apellidos != null) {
+                    nombre = nombre + " " + params.clientes[i].apellidos
+                }
             }
         }
         setDatosCompra((valores) => ({
@@ -211,6 +218,7 @@ const NuevaCompra = (params) => {
             if (json == 'updated') {
                 loadingOff()
                 successAlert('Venta actualizada')
+                location.reload()
             }
         })
     }
@@ -258,36 +266,36 @@ const NuevaCompra = (params) => {
     }
 
     function getProducto(e) {
-            if (validarInventario(e.target.value)) {
-                return
-            }
-            let nombre = ''
-            let precio = 0
-            for (let i = 0; i < params.productos.length; i++) {
-                if (e.target.value == params.productos[i].id) {
+        if (validarInventario(e.target.value)) {
+            return
+        }
+        let nombre = ''
+        let precio = 0
+        for (let i = 0; i < params.productos.length; i++) {
+            if (e.target.value == params.productos[i].id) {
 
-                    nombre = params.productos[i].nombre
-                    precio = params.productos[i].valor
-                }
+                nombre = params.productos[i].nombre
+                precio = params.productos[i].valor
             }
-            let array = datosCompra.listaProductos
-            
-            let objeto = {
-                id: parseInt(array.length)+parseInt(1),
-                codigo: e.target.value,
-                nombre: nombre,
-                cantidad: 1,
-                precio: precio
-            }
-            array.push(objeto)
-            reiniciarProductos()
-            setTimeout(() => {
-                setDatosCompra((valores) => ({
-                    ...valores,
-                    listaProductos: array
-                }))
-                calcularTotales(array)
-            }, 100); 
+        }
+        let array = datosCompra.listaProductos
+
+        let objeto = {
+            id: parseInt(array.length) + parseInt(1),
+            codigo: e.target.value,
+            nombre: nombre,
+            cantidad: 1,
+            precio: precio
+        }
+        array.push(objeto)
+        reiniciarProductos()
+        setTimeout(() => {
+            setDatosCompra((valores) => ({
+                ...valores,
+                listaProductos: array
+            }))
+            calcularTotales(array)
+        }, 100);
     }
 
     function reiniciarProductos() {
@@ -363,22 +371,22 @@ const NuevaCompra = (params) => {
     }
 
     function masCant(item) {
-            if (validarInventario(item.codigo)) {
-                return
-            }
-            const temp = datosCompra.listaProductos
-            reiniciarProductos()
-            setTimeout(() => {
-                const updatedArray = temp.map(p =>
-                    p.id === item.id ? { ...p, cantidad: parseInt(p.cantidad) + 1 }
-                        : p
-                )
-                setDatosCompra((valores) => ({
-                    ...valores,
-                    listaProductos: updatedArray
-                }))
-                calcularTotales(updatedArray)
-            }, 100);
+        if (validarInventario(item.codigo)) {
+            return
+        }
+        const temp = datosCompra.listaProductos
+        reiniciarProductos()
+        setTimeout(() => {
+            const updatedArray = temp.map(p =>
+                p.id === item.id ? { ...p, cantidad: parseInt(p.cantidad) + 1 }
+                    : p
+            )
+            setDatosCompra((valores) => ({
+                ...valores,
+                listaProductos: updatedArray
+            }))
+            calcularTotales(updatedArray)
+        }, 100);
     }
 
     function cambioCant(item) {
@@ -416,7 +424,7 @@ const NuevaCompra = (params) => {
     }
 
     function cambioRecibido(e) {
-        let cambio = parseInt(e.target.value) - (parseInt(datosCompra.total_compra)+ parseInt(datosCompra.domicilio))
+        let cambio = parseInt(e.target.value) - (parseInt(datosCompra.total_compra) + parseInt(datosCompra.domicilio))
         setDatosCompra((valores) => ({
             ...valores,
             dinerorecibido: e.target.value,
@@ -459,7 +467,6 @@ const NuevaCompra = (params) => {
                         </div>
                         <textarea name='comentarios' placeholder='Comentarios compra...' onChange={cambioComentario} className="form-control rounded" value={datosCompra.comentarios}></textarea>
                     </div>
-
                     <div className='col-lg-6 col-md-6 col-sm-12 col-12'>
                         <div style={{ textAlign: 'center', marginTop: '0.2em' }} className="border border-success rounded">
                             <h6 style={{ textAlign: 'center', marginTop: '0.4em' }}>Valor total productos</h6>

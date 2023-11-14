@@ -16,8 +16,8 @@ trait MetodosGenerales
     {
         $clientes = DB::table('clientes')->get();
         foreach ($clientes as $cliente) {
-            $telefono = DB::table('telefonos_clientes')->where('cedula', '=', $cliente->cedula)->get();
-            $usuario = DB::table('keys')->where('cedula', '=', $cliente->cedula)->get();
+            $telefono = DB::table('telefonos_clientes')->where('cedula', '=', $cliente->id)->get();
+            $usuario = DB::table('keys')->where('cedula', '=', $cliente->id)->get();
             $cliente->telefonos = $telefono;
             $cliente->usuario = $usuario;
         }

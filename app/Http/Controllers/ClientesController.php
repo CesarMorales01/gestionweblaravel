@@ -30,7 +30,12 @@ class ClientesController extends Controller
         $telefono = [];
         foreach ($clientes as $cliente) {
             $telefono = DB::table('telefonos_clientes')->where('cedula', '=', $cliente->id)->get();
-            $cliente->telefonos = $telefono;
+            if($telefono!=null){
+                $cliente->telefonos = $telefono;
+            }else{
+                $tels=[];
+                $cliente->telefonos =$tels;
+            }
             $user=DB::table('keys')->where('cedula', '=', $cliente->id)->first();
             $cliente->usuario=$user;
         }
@@ -83,7 +88,7 @@ class ClientesController extends Controller
     {
         $contra = Hash::make($request->clave);
         DB::table('keys')->insert([
-            'cedula' => $request->cedula,
+            'cedula' => $request->id,
             'name' => $request->usuario,
             'password' => $contra,
             'email' => $request->correo
@@ -99,6 +104,7 @@ class ClientesController extends Controller
         } else {
             DB::table('telefonos_clientes')->where('cedula', '=', $id)->delete();
             DB::table('keys')->where('cedula', '=', $id)->delete();
+            DB::table('clientes')->where('id', $id)->delete();
             $estado = "¡Cliente eliminado!";
         }
         return Redirect::route('customer.list', $estado);

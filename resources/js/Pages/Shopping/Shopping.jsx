@@ -27,7 +27,7 @@ const ListaCompras = (params) => {
     }, [filterLista, lista])
 
     useEffect(() => {
-        if (params.estado != null) {
+        if (params.estado != null && window.location.href.includes('page')==false) {
             Swal.fire({
                 title: params.estado,
                 icon: params.estado.includes('elimin') ? 'warning' : 'success',
@@ -35,6 +35,7 @@ const ListaCompras = (params) => {
             })
         }
         if (lista.length == 0) {
+
             const url = params.globalVars.myUrl + 'api/shopping/allshopping'
             fetch(url)
                 .then((response) => {
@@ -55,15 +56,13 @@ const ListaCompras = (params) => {
                     if (lista[i].cliente.nombre.toString().toLowerCase().includes(buscar)) {
                         encontrado = lista[i]
                     }
-                    if (lista[i].cliente.cedula && encontrado == '') {
+                    if (lista[i].cliente.cedula != null && encontrado == '') {
                         if (lista[i].cliente.cedula.toString().toLowerCase().includes(buscar)) {
                             encontrado = lista[i]
                         }
                     }
-                    if (lista[i].cliente.apellidos && encontrado == '') {
-
+                    if (lista[i].cliente.apellidos != '' && encontrado == '') {
                         let nomApe = lista[i].cliente.nombre + " " + lista[i].cliente.apellidos
-
                         if (nomApe.toString().toLowerCase().includes(buscar)) {
                             encontrado = lista[i]
                         }
@@ -75,14 +74,22 @@ const ListaCompras = (params) => {
             }
         } else {
             for (let i = 0; i < lista.length; i++) {
+                let encontrado = ''
                 lista[i].listaProductos.forEach(element => {
                     if (element.producto.toLowerCase().includes(buscar)) {
-                        newArray.push(lista[i])
+                        encontrado = element
                     }
+                    if (element.descripcion != '' && element.descripcion!=null) {
+                        if (element.descripcion.toLowerCase().includes(buscar) && encontrado=='') {
+                            encontrado = element
+                        }
+                    } 
                 });
+                if (encontrado != '') {
+                    newArray.push(lista[i])
+                }
             }
         }
-        console.log(newArray)
         setFilterLista(newArray)
         if (buscar == '') {
             setFilterLista(params.compras.data)

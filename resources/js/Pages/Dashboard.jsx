@@ -11,10 +11,24 @@ import logoProviders from '../../../public/Images/Config/provider.jpg'
 import logoCarousel from '../../../public/Images/Config/carousel.png'
 import Progressbar from './UIGeneral/ProgressBar'
 import React, { useState, useEffect } from 'react'
+import DialogoContrato from './UIGeneral/DialogoContrato';
+import GlobalFunctions from './services/GlobalFunctions';
 
 export default function Dashboard(params) {
 
     const [progressBar, setProgressBar] = useState(false)
+    const glob = new GlobalFunctions()
+
+    useEffect(() => {
+        if (glob.getCookie('contrato') != 'ok') {
+            document.getElementById('btnDialogoContrato').click()
+        }
+    }, [])
+
+    function aceptarContrato(){
+        const exp= 3600*60*24*365*10
+        glob.setCookie('contrato', 'ok', exp)
+    }
 
     function goProducts() {
         window.location = params.globalVars.myUrl + "product"
@@ -139,6 +153,8 @@ export default function Dashboard(params) {
                     </div>
                 </div>
             </div>
+            <button id='btnDialogoContrato' type="button" style={{ display: 'none' }} data-toggle="modal" data-target="#modalContrato"></button>
+            <DialogoContrato aceptarContrato={aceptarContrato}></DialogoContrato>
         </AuthenticatedLayout>
     );
 }

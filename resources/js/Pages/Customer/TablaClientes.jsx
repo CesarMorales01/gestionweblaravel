@@ -1,11 +1,12 @@
 import React from 'react'
+import Pagination from '../Product/Pagination'
 
 const TablaClientes = (params) => {
 
-    function getTelefono(item){
-        let tel=''
-        if(Object.keys(item.telefonos).length !== 0){
-            tel=item.telefonos[0].telefono
+    function getTelefono(item) {
+        let tel = ''
+        if (Object.keys(item.telefonos).length !== 0) {
+            tel = item.telefonos[0].telefono
         }
         return tel
     }
@@ -57,7 +58,11 @@ const TablaClientes = (params) => {
                         })}
                 </tbody>
             </table>
-
+            {params.noClientes ?
+                ''
+                :
+                <Pagination class="mt-6" links={params.pagination} />
+            }
         </div>
     )
 }
